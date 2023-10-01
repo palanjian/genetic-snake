@@ -45,9 +45,10 @@ public class Simulation {
 	
 	public void setupNextGeneration() {
 		ArrayList<SnakeGame> fittest = selectFittest(genes);
-		ArrayList<SnakeGame> newGeneration = recombination(fittest);
+		ArrayList<SnakeGame> newGeneration = recombination(fittest); //recombination w elitism
 		//mutation();
-		//elitism();
+		
+		genes = newGeneration;
 	}
 
 	
@@ -73,7 +74,7 @@ public class Simulation {
 		for(int i=0; i<Config.numGenes/2; ++i) {
 			SnakeGame selected = selectUsingRoulette(normalized, sumOfEvaluations);
 			finalList.add(selected);
-			System.out.println("Selected " + selected.getGene() + " which has eval: " + selected.getEvaluation());
+//			/System.out.println("Selected " + selected.getGene() + " which has eval: " + selected.getEvaluation());
 		}
 		return finalList;
 	}
@@ -91,8 +92,38 @@ public class Simulation {
 	}
 	
 	private ArrayList<SnakeGame> recombination(ArrayList<SnakeGame> sg){
-		return sg;
+		ArrayList<SnakeGame> finalList = new ArrayList<SnakeGame>();
+		for(int i=0; i<sg.size()/2; ++i) {
+			ArrayList<SnakeGame> recombinations = singlePointCrossover(sg.get(i*2), sg.get(i*2 + 1));
+			finalList.addAll(recombinations);
+		}
+		//elitism, adds the best from the previous generation so it never gets worse
+		Collections.sort(sg);
+		finalList.set(finalList.size()-1, sg.get(0));
+		
+		return finalList;
 	}
+	
+	public ArrayList<SnakeGame> singlePointCrossover(SnakeGame sg1, SnakeGame sg2){
+		int splitPoint = rand.nextInt(Config.geneLength);
+		String newGene1 = "";
+		String newGene2 = "";
+		for(int i=0; i<Config.geneLength; ++i) {
+			if(i < splitPoint) {
+				newGene1 += sg1.getGene().charAt(i);
+				newGene2 += sg2.getGene().charAt(i);
+			}
+			else {
+				newGene1 += sg2.getGene().charAt(i);
+				newGene2 += sg1.getGene().charAt(i);
+			}
+		}
+		ArrayList<SnakeGame> finalList = new ArrayList<SnakeGame>();
+		finalList.add(new SnakeGame(newGene1));
+		finalList.add(new SnakeGame(newGene2));
+		return finalList;
+	}
+	
 	
 	private int sum(ArrayList<SnakeGame> sg) {
 		int sum = 0;

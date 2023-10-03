@@ -99,7 +99,10 @@ public class Simulation {
 		}
 		//elitism, adds the best from the previous generation so it never gets worse
 		Collections.sort(sg);
-		finalList.set(finalList.size()-1, sg.get(0));
+		//implement elitism
+		for(int i=0; i<Config.elitists; ++i) {
+			finalList.add(genes.get(i));
+		}
 		
 		return finalList;
 	}

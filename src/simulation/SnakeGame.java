@@ -1,5 +1,7 @@
 package simulation;
 
+import game.Game;
+
 public class SnakeGame implements Comparable<SnakeGame>{
 	private String gene;
 	private int evaluation;
@@ -14,19 +16,16 @@ public class SnakeGame implements Comparable<SnakeGame>{
 		//plays the game of snake and outputs the evaluation
 		// PROOF OF CONCEPT: MOST FIT GENE HAS MOST 'S' chars
 		
-		int numS = 0;
-		int numL = 0;
+		Game game = new Game(gene);
+		game.playSnake();
 		
-		for(int i=0; i<gene.length(); ++i) {
-			if(gene.charAt(i) == 'S') { numS++; }
-			if(gene.charAt(i) == 'L') { numL++; }
-		}
-		
-		evaluation = evaluate(numS, numL);
+		int stepsTaken = game.getStepsTaken();
+		int dotsEaten = game.snake.getDotsEaten();
+		evaluation = evaluate(dotsEaten, stepsTaken);
 	}
 	
-	public int evaluate(int numS, int numL) {
-		return (10*numS) - (5*numL);
+	public int evaluate(int dots, int steps) {
+		return (500*dots) - (5*steps);
 	}
 
 

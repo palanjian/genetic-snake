@@ -21,10 +21,11 @@ public class SnakeGame implements Comparable<SnakeGame>{
 		
 		int stepsTaken = game.getStepsTaken();
 		int dotsEaten = game.snake.getDotsEaten();
-		evaluation = evaluate(dotsEaten, stepsTaken);
+		boolean collision = game.snake.isCollided();
+		evaluation = evaluate(dotsEaten, stepsTaken, collision);
 	}
-	
-	public int evaluate(int dots, int steps) {
+
+	public int evaluate(int dots, int steps, boolean collision) {
 		return (500*dots) - (5*steps);
 	}
 

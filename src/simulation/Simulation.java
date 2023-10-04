@@ -13,6 +13,8 @@ public class Simulation {
 	private ArrayList<SnakeGame> genes;
 	Random rand;
 
+	private int generationsToSimulate =1;
+	
 	public Simulation() {
 		continueSimulation = true;
 		generation = 0;
@@ -41,6 +43,7 @@ public class Simulation {
 		}
 		Collections.sort(genes);
 		System.out.println("Greatest evaluation for gen " + generation + ": " + genes.get(0).getEvaluation());
+		System.out.println("Chromosome is " + genes.get(0).getGene());
 	}
 	
 	public void setupNextGeneration() {
@@ -137,9 +140,10 @@ public class Simulation {
 	}
 
 	public void promptUser() {
-		System.out.println("Would you like to simulate a further generation? Y/N");
+		--generationsToSimulate;
+		if(generationsToSimulate > 0) return;
+		System.out.println("How many generations would you like to simulate?");
 		Scanner scan = new Scanner(System.in);
-		if(scan.next().equals("Y")) continueSimulation = true;
-		else if(scan.next().equals("N")) continueSimulation = false;
+		generationsToSimulate = scan.nextInt();
 	}
 }

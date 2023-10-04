@@ -4,6 +4,7 @@ public class Tile {
 	private int row;
 	private int column;
 	private TileType type;
+	
 	public Tile(int row, int column, TileType type) {
 		this.setRow(row);
 		this.setColumn(column);

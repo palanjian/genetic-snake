@@ -18,7 +18,7 @@ public class Simulation {
 	public Simulation() {
 		continueSimulation = true;
 		generation = 0;
-		genes = GeneticString.initialize();
+		genes = ChromosomeGenerator.initialize();
 		rand  = new Random(System.currentTimeMillis());
 	}
 	
@@ -30,6 +30,7 @@ public class Simulation {
 		while(continueSimulation) {
 			playGames();
 			++generation;
+			promptVisualization();
 			promptUser();
 			
 			setupNextGeneration();
@@ -43,7 +44,19 @@ public class Simulation {
 		}
 		Collections.sort(genes);
 		System.out.println("Greatest evaluation for gen " + generation + ": " + genes.get(0).getEvaluation());
-		System.out.println("Chromosome is " + genes.get(0).getGene());
+		System.out.println("Chromosome is " + genes.get(0).getChromosome());		
+	}
+	
+	public void promptVisualization() { 
+		System.out.println("Would you like to visualize this generation? Y/N");
+		Scanner scan = new Scanner(System.in);
+		String input = scan.next().strip();
+		if(input.toLowerCase().equals("y")) visualize(genes.get(0).getChromosome());
+	}
+	
+	public void visualize(String chromosome) {
+		SnakeGame sg = new SnakeGame(chromosome);
+		sg.visualize();
 	}
 	
 	public void setupNextGeneration() {
@@ -74,7 +87,7 @@ public class Simulation {
 		int sumOfEvaluations = sum(normalized);
 		
 		ArrayList<SnakeGame> finalList = new ArrayList<>();
-		for(int i=0; i<Config.numGenes/2; ++i) {
+		for(int i=0; i<Config.generationSize/2; ++i) {
 			SnakeGame selected = selectUsingRoulette(normalized, sumOfEvaluations);
 			finalList.add(selected);
 //			/System.out.println("Selected " + selected.getGene() + " which has eval: " + selected.getEvaluation());
@@ -111,17 +124,17 @@ public class Simulation {
 	}
 	
 	public ArrayList<SnakeGame> singlePointCrossover(SnakeGame sg1, SnakeGame sg2){
-		int splitPoint = rand.nextInt(Config.geneLength);
+		int splitPoint = rand.nextInt(Config.chromosomeLength);
 		String newGene1 = "";
 		String newGene2 = "";
-		for(int i=0; i<Config.geneLength; ++i) {
+		for(int i=0; i<Config.chromosomeLength; ++i) {
 			if(i < splitPoint) {
-				newGene1 += sg1.getGene().charAt(i);
-				newGene2 += sg2.getGene().charAt(i);
+				newGene1 += sg1.getChromosome().charAt(i);
+				newGene2 += sg2.getChromosome().charAt(i);
 			}
 			else {
-				newGene1 += sg2.getGene().charAt(i);
-				newGene2 += sg1.getGene().charAt(i);
+				newGene1 += sg2.getChromosome().charAt(i);
+				newGene2 += sg1.getChromosome().charAt(i);
 			}
 		}
 		ArrayList<SnakeGame> finalList = new ArrayList<SnakeGame>();

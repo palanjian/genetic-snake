@@ -1,34 +1,47 @@
 package simulation;
 
-import game.Game;
+import snake.Board;
+import snake.Snake;
+import main.Config;
+import main.GamePanel;
+import main.Main;
 
 public class SnakeGame implements Comparable<SnakeGame>{
-	private String gene;
+	private String chromosome;
 	private int evaluation;
 	private double normalized;
 	
-	public SnakeGame(String gene) {
-		this.gene = gene;
-	}
+	private int stepsTaken = 0;
+	private int dotsEaten = 0;
 	
+	private Board board = new Board(this, Config.rows, Config.columns);
+	private Snake snake = new Snake(this, board);
+	
+	private GamePanel gp;
+	
+	public SnakeGame(String chromosome) {
+		this.chromosome = chromosome;
+	}
 	
 	public void play() {
-		//plays the game of snake and outputs the evaluation
-		// PROOF OF CONCEPT: MOST FIT GENE HAS MOST 'S' chars
-		
-		Game game = new Game(gene);
-		game.playSnake();
-		
-		int stepsTaken = game.getStepsTaken();
-		int dotsEaten = game.snake.getDotsEaten();
-		boolean collision = game.snake.isCollided();
-		evaluation = evaluate(dotsEaten, stepsTaken, collision);
+		for(int i=0; i<chromosome.length(); ++i){
+			char nextMove = chromosome.charAt(i);
+			snake.update(nextMove);
+			if(checkLoseCondition()) {
+				break;
+			}
+			else if(checkWinCondition()) {
+				System.out.println("Snake has won the game");
+				break;
+			}
+			++stepsTaken;
+		}
+		evaluation = evaluate(dotsEaten, stepsTaken);
 	}
-
-	public int evaluate(int dots, int steps, boolean collision) {
-		return (500*dots) - (5*steps);
+	
+	public int evaluate(int dots, int steps) {
+	    return (500 * dots) - (10 * steps);
 	}
-
 
 	@Override
 	public int compareTo(SnakeGame o) {
@@ -37,9 +50,53 @@ public class SnakeGame implements Comparable<SnakeGame>{
 		else return 0;
 	}
 	
-	public String getGene() { return gene; }
- 	public int getEvaluation() { return evaluation; }
+	public boolean checkLoseCondition() {
+		if(snake.hasCollided()) return true;
+		return false;
+	}
+	
+	public boolean checkWinCondition() {
+		if(snake.getSnakePieces().size() == Config.rows * Config.columns - 1) return true;
+		return false;
+	}
+	
+	//visualization-centered functions
+	public void visualize() {
+		gp = new GamePanel(this);
+		Main.window.add(gp);
+		Main.window.pack();
+		Main.window.setVisible(true);
+		
+		int i = 0;
+		double drawInterval = 1000000000/6;
+		double delta = 0;
+		long lastTime = System.nanoTime();
+		long currentTime;
+	
+		while(i < chromosome.length() && !checkLoseCondition() && !checkWinCondition()) {
+			//game loop
+			currentTime = System.nanoTime();
+			delta += (currentTime - lastTime) / drawInterval;
+			lastTime = currentTime;
+			if(delta >=1) {
+				char nextMove = chromosome.charAt(i);
+				snake.update(nextMove);
+				++stepsTaken;
+				gp.repaint(); //calls paintComponent		
+				--delta;
+			}
+		}
+	}
+	
+	public GamePanel getGamePanel() { return gp; }
+	public String getChromosome() { return chromosome; }
+	public int getEvaluation() { return evaluation; }
 	public void addToEvaluation(int value) { evaluation += value; }
 	public double getNormalized() { return normalized; }
 	public void setNormalized(double value) { normalized = value; }
+	public int getStepsTaken() { return stepsTaken; }
+	public void incrementDotsEaten() { dotsEaten +=1; }
+	public Snake getSnake() { return snake; }
+	public Board getBoard() { return board; }
+
 }

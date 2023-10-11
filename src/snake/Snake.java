@@ -37,11 +37,13 @@ public class Snake {
 		updateDirection(nextMove);
 		updatePosition();
 		//remove from end
+		checkFood();
 		board.setCellType(snakePieces.getLast().getRow(), snakePieces.getLast().getColumn(), CellType.EMPTY);
 		snakePieces.removeLast();
 		//add to beginning
 		snakePieces.addFirst(new Cell(row, column, CellType.SNAKE));
-		checkFood();
+		board.setCellType(row, column, CellType.SNAKE);
+
 	}
 
 	private void checkFood() {

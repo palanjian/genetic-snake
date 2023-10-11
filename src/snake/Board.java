@@ -54,6 +54,14 @@ public class Board {
 		g2.setColor(Color.RED);
 		int tileSize = snakeGame.getGamePanel().getTileSize();
 		g2.fillRect((foodColumn * tileSize), (rows * tileSize) - (foodRow * tileSize) - tileSize, tileSize, tileSize);
+		
+		/*
+		g2.setColor(Color.BLUE);
+		for(int i=0; i<rows; ++i) {
+			for(int j=0; j<columns; ++j) {
+				if(cells[i][j].getType() == CellType.SNAKE) g2.fillRect((j * tileSize), (rows * tileSize) - (i * tileSize) - tileSize, tileSize, tileSize);
+			}
+		} */
 	}
 
 	//Getters & Setters

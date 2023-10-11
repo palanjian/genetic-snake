@@ -66,8 +66,7 @@ public class Simulation {
 	public void setupNextGeneration() {
 		ArrayList<SnakeGame> fittest = selectFittest(genes);
 		ArrayList<SnakeGame> newGeneration = recombination(fittest); //recombination w elitism
-		//mutation();
-		
+		//newGeneration = mutation(newGeneration);
 		genes = newGeneration;
 	}
 
@@ -147,7 +146,33 @@ public class Simulation {
 		return finalList;
 	}
 	
+	public ArrayList<SnakeGame> mutation(ArrayList<SnakeGame> sg){
+		ArrayList<SnakeGame> finalList = new ArrayList<SnakeGame>();
+
+		for(SnakeGame s : sg) {
+			SnakeGame newGame = new SnakeGame(mutate(s.getChromosome()));
+			finalList.add(newGame);
+		}
+		return finalList;
+	}
 	
+	public String mutate(String chromosome) {
+		String finalString = "";
+		char[] options = {'L', 'R', 'S'};
+		for(int i=0; i<chromosome.length(); ++i) {
+			if(rand.nextInt(100) < Config.mutationRate) {
+				while(true) {
+					int index = rand.nextInt(3);
+					if(options[index] != chromosome.charAt(i)) {
+						finalString += options[index];
+						break;
+					}					
+				}
+			}
+			else finalString += chromosome.charAt(i);
+		}
+		return finalString;
+	}
 	private int sum(ArrayList<SnakeGame> sg) {
 		int sum = 0;
 		for(SnakeGame s : sg) {

@@ -23,7 +23,6 @@ public class Main {
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		window.setResizable(false);
 		window.setTitle("Java2DMMO");
-		window.setLocationRelativeTo(null);
 	}
 	
 	public void setupSimulation(){

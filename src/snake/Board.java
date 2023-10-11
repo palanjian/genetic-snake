@@ -51,9 +51,9 @@ public class Board {
 	}
 	
 	public void draw(Graphics2D g2) {
-		int tileSize = snakeGame.getGamePanel().getTileSize();
 		g2.setColor(Color.RED);
-		g2.fill(new Rectangle(foodRow, foodColumn, tileSize, tileSize));
+		int tileSize = snakeGame.getGamePanel().getTileSize();
+		g2.fillRect((foodColumn * tileSize), (rows * tileSize) - (foodRow * tileSize) - tileSize, tileSize, tileSize);
 	}
 
 	//Getters & Setters

@@ -21,6 +21,7 @@ public class SnakeGame implements Comparable<SnakeGame>{
 	
 	public SnakeGame(String chromosome) {
 		this.chromosome = chromosome;
+		
 	}
 	
 	public void play() {
@@ -66,14 +67,15 @@ public class SnakeGame implements Comparable<SnakeGame>{
 		Main.window.add(gp);
 		Main.window.pack();
 		Main.window.setVisible(true);
-		
+		Main.window.setLocationRelativeTo(null);
+
 		int i = 0;
 		double drawInterval = 1000000000/6;
 		double delta = 0;
 		long lastTime = System.nanoTime();
 		long currentTime;
 	
-		while(i < chromosome.length() && !checkLoseCondition() && !checkWinCondition()) {
+		while(i < chromosome.length()) {
 			//game loop
 			currentTime = System.nanoTime();
 			delta += (currentTime - lastTime) / drawInterval;
@@ -82,8 +84,11 @@ public class SnakeGame implements Comparable<SnakeGame>{
 				char nextMove = chromosome.charAt(i);
 				snake.update(nextMove);
 				++stepsTaken;
-				gp.repaint(); //calls paintComponent		
 				--delta;
+				++i;
+				
+				if(checkLoseCondition() || checkWinCondition()) break;
+				gp.repaint(); //calls paintComponent		
 			}
 		}
 	}

@@ -24,7 +24,7 @@ public class Config {
 	
 	public static final Direction initialDirection = Direction.RIGHT;
 
-	public static int initialRow = 0;
+	public static int initialRow = 5;
 	
-	public static int initialColumn = 0;
+	public static int initialColumn = 5;
 }

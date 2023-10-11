@@ -38,8 +38,8 @@ public class GamePanel extends JPanel{
 		super.paintComponent(g);
 		Graphics2D g2 = (Graphics2D)g;
 		
-		board.draw(g2);
 		snake.draw(g2);
+		board.draw(g2);
 		g2.dispose();
 	}
 	

@@ -13,7 +13,7 @@ public class Simulation {
 	private ArrayList<SnakeGame> genes;
 	Random rand;
 
-	private int generationsToSimulate =1;
+	private int generationsToSimulate = 1;
 	
 	public Simulation() {
 		continueSimulation = true;
@@ -48,10 +48,14 @@ public class Simulation {
 	}
 	
 	public void promptVisualization() { 
-		System.out.println("Would you like to visualize this generation? Y/N");
-		Scanner scan = new Scanner(System.in);
-		String input = scan.next().strip();
-		if(input.toLowerCase().equals("y")) visualize(genes.get(0).getChromosome());
+		if(generationsToSimulate > 1) return;
+		while(true) {
+			System.out.println("Would you like to visualize this generation? Y/N");
+			Scanner scan = new Scanner(System.in);
+			String input = scan.next().strip();
+			if(input.toLowerCase().equals("y")) visualize(genes.get(0).getChromosome());
+			else if(input.toLowerCase().equals("n")) break;
+		}
 	}
 	
 	public void visualize(String chromosome) {

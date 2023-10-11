@@ -37,6 +37,7 @@ public class Snake {
 		updateDirection(nextMove);
 		updatePosition();
 		//remove from end
+		board.setCellType(snakePieces.getLast().getRow(), snakePieces.getLast().getColumn(), CellType.EMPTY);
 		snakePieces.removeLast();
 		//add to beginning
 		snakePieces.addFirst(new Cell(row, column, CellType.SNAKE));
@@ -80,10 +81,10 @@ public class Snake {
 			case LEFT: newColumn -=1; break;
 			case RIGHT: newColumn +=1; break;
 		}
-				
-		board.setCellType(row, column, CellType.SNAKE);
+
 		if(checkCollision(newRow, newColumn)) return;
-		
+
+		board.setCellType(row, column, CellType.SNAKE);
 		row = newRow;
 		column = newColumn;
 	}
@@ -111,9 +112,11 @@ public class Snake {
 	}
 	
 	public void draw(Graphics2D g2) {
-		int tileSize = snakeGame.getGamePanel().getTileSize();
 		g2.setColor(Color.GREEN);
-		g2.fill(new Rectangle((tileSize*column), tileSize*row, tileSize, tileSize));
+		int tileSize = snakeGame.getGamePanel().getTileSize();
+		for(Cell cell : snakePieces) {
+			g2.fillRect((cell.getColumn() * tileSize), (board.getRows() * tileSize) - (cell.getRow() * tileSize) - tileSize, tileSize, tileSize);
+		}
 	}
 
 	//Getters & Setters

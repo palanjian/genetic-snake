@@ -10,7 +10,7 @@ import main.Config;
 public class Simulation {
 	private boolean continueSimulation; 
 	private int generation;
-	private ArrayList<SnakeGame> genes;
+	private ArrayList<SnakeGame> chromosomes;
 	Random rand;
 
 	private int generationsToSimulate = 1;
@@ -18,7 +18,7 @@ public class Simulation {
 	public Simulation() {
 		continueSimulation = true;
 		generation = 0;
-		genes = ChromosomeGenerator.initialize();
+		chromosomes = ChromosomeGenerator.initialize();
 		rand  = new Random(System.currentTimeMillis());
 	}
 	
@@ -39,12 +39,12 @@ public class Simulation {
 	
 	public void playGames() {
 		//plays the game for all strings and calculates their evaluations 
-		for(SnakeGame sg : genes) {
+		for(SnakeGame sg : chromosomes) {
 			sg.play();
 		}
-		Collections.sort(genes);
-		System.out.println("Greatest evaluation for gen " + generation + ": " + genes.get(0).getEvaluation());
-		System.out.println("Chromosome is " + genes.get(0).getChromosome());		
+		Collections.sort(chromosomes);
+		System.out.println("Greatest evaluation for gen " + generation + ": " + chromosomes.get(0).getEvaluation());
+		System.out.println("Chromosome is " + chromosomes.get(0).getChromosome());		
 	}
 	
 	public void promptVisualization() { 
@@ -53,7 +53,7 @@ public class Simulation {
 			System.out.println("Would you like to visualize this generation? Y/N");
 			Scanner scan = new Scanner(System.in);
 			String input = scan.next().strip();
-			if(input.toLowerCase().equals("y")) visualize(genes.get(0).getChromosome());
+			if(input.toLowerCase().equals("y")) visualize(chromosomes.get(0).getChromosome());
 			else if(input.toLowerCase().equals("n")) break;
 		}
 	}
@@ -64,13 +64,22 @@ public class Simulation {
 	}
 	
 	public void setupNextGeneration() {
-		ArrayList<SnakeGame> fittest = selectFittest(genes);
+		ArrayList<SnakeGame> fittest = selectFittest(chromosomes);
 		ArrayList<SnakeGame> newGeneration = recombination(fittest); //recombination w elitism
-		//newGeneration = mutation(newGeneration);
-		genes = newGeneration;
+		newGeneration = mutation(newGeneration);
+		newGeneration.addAll(getElitists(Config.elitists));
+		chromosomes = newGeneration;
 	}
 
 	
+	private ArrayList<SnakeGame> getElitists(int elitists) {
+		ArrayList<SnakeGame> finalList = new ArrayList<SnakeGame>();
+		for(int i=0; i<elitists; ++i) {
+			finalList.add(chromosomes.get(i));
+		}
+		return finalList;
+	}
+
 	public ArrayList<SnakeGame> selectFittest(ArrayList<SnakeGame> sg){
 		//gets the value of the last value in the sorted list, which would be the lowest
 		int lowestValue = sg.get(sg.size()-1).getEvaluation();
@@ -120,7 +129,7 @@ public class Simulation {
 		Collections.sort(sg);
 		//implement elitism
 		for(int i=0; i<Config.elitists; ++i) {
-			finalList.add(genes.get(i));
+			finalList.add(chromosomes.get(i));
 		}
 		
 		return finalList;
@@ -173,6 +182,7 @@ public class Simulation {
 		}
 		return finalString;
 	}
+	
 	private int sum(ArrayList<SnakeGame> sg) {
 		int sum = 0;
 		for(SnakeGame s : sg) {

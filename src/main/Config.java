@@ -28,5 +28,5 @@ public class Config {
 	
 	public static int initialColumn = 5;
 
-	public static double mutationRate = 2;
+	public static double mutationRate = 3;
 }

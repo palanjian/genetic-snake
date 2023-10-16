@@ -29,4 +29,8 @@ public class Config {
 	public static int initialColumn = 5;
 
 	public static double mutationRate = 3;
+
+	public static String selectionAlgorithm = "ROULLETE";
+
+	public static String recombinationAlgorithm = "SINGLE_POINT";
 }

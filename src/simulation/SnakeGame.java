@@ -21,7 +21,6 @@ public class SnakeGame implements Comparable<SnakeGame>{
 	
 	public SnakeGame(String chromosome) {
 		this.chromosome = chromosome;
-		
 	}
 	
 	public void play() {
@@ -64,10 +63,7 @@ public class SnakeGame implements Comparable<SnakeGame>{
 	//visualization-centered functions
 	public void visualize() {
 		gp = new GamePanel(this);
-		Main.window.add(gp);
-		Main.window.pack();
-		Main.window.setVisible(true);
-		Main.window.setLocationRelativeTo(null);
+		Main.setGamePanel(gp);
 
 		int i = 0;
 		double drawInterval = 1000000000/6;

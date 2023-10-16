@@ -19,15 +19,22 @@ public class Main {
 	
 	public void setupVisuals(){
 		window = new JFrame();
-		
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		window.setResizable(false);
-		window.setTitle("Java2DMMO");
+		window.setTitle("Genetic Snake by @palanjian");
 	}
 	
+	public static void setGamePanel(GamePanel gp) {
+		window.add(gp);
+		window.pack();
+		window.setVisible(true);
+		window.setLocationRelativeTo(null);
+	}
+		
 	public void setupSimulation(){
 		Simulation simulation = new Simulation();
 		simulation.simulate();
 	}
 
+	
 }

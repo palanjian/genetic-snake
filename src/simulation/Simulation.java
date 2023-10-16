@@ -8,111 +8,79 @@ import java.util.Scanner;
 import main.Config;
 
 public class Simulation {
-	private boolean continueSimulation; 
-	private int generation;
-	private ArrayList<SnakeGame> chromosomes;
-	Random rand;
-
+	private boolean continueSimulation = true; 
+	private int generation = 0;
+	private ArrayList<SnakeGame> chromosomes = ChromosomeGenerator.initialize();
+	Random rand = new Random();
+	Scanner scan = new Scanner(System.in);
 	private int generationsToSimulate = 1;
-	
-	public Simulation() {
-		continueSimulation = true;
-		generation = 0;
-		chromosomes = ChromosomeGenerator.initialize();
-		rand  = new Random(System.currentTimeMillis());
-	}
-	
+		
 	public void simulate(){
-		//for every gene, run the game and calculate its value using value function
-		//get the top x% of values (using roulette wheel) and some elitisim, add to list
-		//cross breed the two values to get new list, add possibility of mutation
-		//rinse and repeat
 		while(continueSimulation) {
-			playGames();
-			++generation;
-			promptVisualization();
-			promptUser();
-			
+			getEvaluations();
+			promptUser();	
 			setupNextGeneration();
+			++generation;
 		}
 	}
-	
-	public void playGames() {
+
+	///////////////////////////////////////////////////////////////////////////////////////////
+	/*                       	  		Simulation Functions                                 */
+	///////////////////////////////////////////////////////////////////////////////////////////	
+	public void getEvaluations() {
 		//plays the game for all strings and calculates their evaluations 
 		for(SnakeGame sg : chromosomes) {
 			sg.play();
 		}
 		Collections.sort(chromosomes);
-		System.out.println("Greatest evaluation for gen " + generation + ": " + chromosomes.get(0).getEvaluation());
-		System.out.println("Chromosome is " + chromosomes.get(0).getChromosome());		
-	}
-	
-	public void promptVisualization() { 
-		if(generationsToSimulate > 1) return;
-		while(true) {
-			System.out.println("Would you like to visualize this generation? Y/N");
-			Scanner scan = new Scanner(System.in);
-			String input = scan.next().strip();
-			if(input.toLowerCase().equals("y")) visualize(chromosomes.get(0).getChromosome());
-			else if(input.toLowerCase().equals("n")) break;
-		}
-	}
-	
-	public void visualize(String chromosome) {
-		SnakeGame sg = new SnakeGame(chromosome);
-		sg.visualize();
+		printGenerationStatistics();
 	}
 	
 	public void setupNextGeneration() {
 		ArrayList<SnakeGame> fittest = selectFittest(chromosomes);
-		ArrayList<SnakeGame> newGeneration = recombination(fittest); //recombination w elitism
-		newGeneration = mutation(newGeneration);
-		newGeneration.addAll(getElitists(Config.elitists));
-		chromosomes = newGeneration;
+		chromosomes = recombination(fittest);
 	}
-
 	
-	private ArrayList<SnakeGame> getElitists(int elitists) {
-		ArrayList<SnakeGame> finalList = new ArrayList<SnakeGame>();
-		for(int i=0; i<elitists; ++i) {
-			finalList.add(chromosomes.get(i));
-		}
-		return finalList;
-	}
-
 	public ArrayList<SnakeGame> selectFittest(ArrayList<SnakeGame> sg){
-		//gets the value of the last value in the sorted list, which would be the lowest
-		int lowestValue = sg.get(sg.size()-1).getEvaluation();
-		System.out.println("Lowest value= " + lowestValue);
-
-		ArrayList<SnakeGame> normalized;
-		if(lowestValue < 0) {
-			normalized = new ArrayList<SnakeGame>();
-			int discrepency = Math.abs(lowestValue);
-			for(SnakeGame s : sg) {
-				s.addToEvaluation(discrepency);
-				normalized.add(s);
-			}
-		}
-		else normalized = sg;
-		
+		ArrayList<SnakeGame> fittest = new ArrayList<>();
+		ArrayList<SnakeGame> normalized = normalize(sg);
 		int sumOfEvaluations = sum(normalized);
 		
-		ArrayList<SnakeGame> finalList = new ArrayList<>();
-		for(int i=0; i<Config.generationSize/2; ++i) {
-			SnakeGame selected = selectUsingRoulette(normalized, sumOfEvaluations);
-			finalList.add(selected);
-//			/System.out.println("Selected " + selected.getGene() + " which has eval: " + selected.getEvaluation());
+		for(int i=0; i<Config.generationSize; ++i) {
+			SnakeGame selected = null;
+			switch(Config.selectionAlgorithm) {
+				case "ROULLETE":
+					selected = selectUsingRoulette(normalized, sumOfEvaluations);
+					break;
+			}
+			fittest.add(selected);
 		}
-		return finalList;
+		return fittest;
 	}
 	
+	private ArrayList<SnakeGame> normalize(ArrayList<SnakeGame> sg) {
+		ArrayList<SnakeGame> normalized = new ArrayList<>();
+		//gets the value of the last value in the sorted list, which would be the lowest
+		int lowestValue = sg.get(sg.size()-1).getEvaluation();
+		if(lowestValue > 0) {
+			return sg;
+		}
+		
+		int discrepency = Math.abs(lowestValue);
+		for(SnakeGame s : sg) {
+			s.addToEvaluation(discrepency);
+			normalized.add(s);
+		}
+		
+		return normalized;
+	}
+
 	public SnakeGame selectUsingRoulette(ArrayList<SnakeGame> sg, int sumOfEvaluations) {
-		int random = rand.nextInt(sumOfEvaluations);
+		int randomNumber = rand.nextInt(sumOfEvaluations);
 		int sum = 0;
 		for(SnakeGame s : sg) {
 			sum += s.getEvaluation();
-			if(sum >= random) {
+			if(sum >= randomNumber) {
 				return s;
 			}
 		}
@@ -120,82 +88,102 @@ public class Simulation {
 	}
 	
 	private ArrayList<SnakeGame> recombination(ArrayList<SnakeGame> sg){
-		ArrayList<SnakeGame> finalList = new ArrayList<SnakeGame>();
-		for(int i=0; i<sg.size()/2; ++i) {
-			ArrayList<SnakeGame> recombinations = singlePointCrossover(sg.get(i*2), sg.get(i*2 + 1));
-			finalList.addAll(recombinations);
-		}
-		//elitism, adds the best from the previous generation so it never gets worse
-		Collections.sort(sg);
-		//implement elitism
-		for(int i=0; i<Config.elitists; ++i) {
-			finalList.add(chromosomes.get(i));
-		}
+		ArrayList<SnakeGame> recombinated = new ArrayList<SnakeGame>();
+		recombinated.addAll(getElitists());
 		
-		return finalList;
+		for(int i=0; i<sg.size()/2; ++i) {
+			ArrayList<SnakeGame> pairOfRecombinations = null;
+			switch(Config.recombinationAlgorithm) {
+				case "SINGLE_POINT":
+					pairOfRecombinations = singlePointCrossover(sg.get(i*2), sg.get(i*2 + 1));
+					recombinated.addAll(pairOfRecombinations);
+					break;
+			}
+		}		
+		return recombinated;
 	}
 	
 	public ArrayList<SnakeGame> singlePointCrossover(SnakeGame sg1, SnakeGame sg2){
+		ArrayList<SnakeGame> pairOfRecombinations = new ArrayList<SnakeGame>();
 		int splitPoint = rand.nextInt(Config.chromosomeLength);
-		String newGene1 = "";
-		String newGene2 = "";
+		String chromosome1 = "";
+		String chromosome2 = "";
+		
 		for(int i=0; i<Config.chromosomeLength; ++i) {
+			char gene1 = sg1.getChromosome().charAt(i);
+			char gene2 = sg2.getChromosome().charAt(i);
+			//checks for mutation
+			gene1 = mutate(gene1);
+			gene2 = mutate(gene2);
+			
 			if(i < splitPoint) {
-				newGene1 += sg1.getChromosome().charAt(i);
-				newGene2 += sg2.getChromosome().charAt(i);
+				chromosome1 += gene1;
+				chromosome2 += gene2;
 			}
 			else {
-				newGene1 += sg2.getChromosome().charAt(i);
-				newGene2 += sg1.getChromosome().charAt(i);
+				chromosome1 += gene2;
+				chromosome2 += gene1;
 			}
 		}
-		ArrayList<SnakeGame> finalList = new ArrayList<SnakeGame>();
-		finalList.add(new SnakeGame(newGene1));
-		finalList.add(new SnakeGame(newGene2));
-		return finalList;
+		
+		pairOfRecombinations.add(new SnakeGame(chromosome1));
+		pairOfRecombinations.add(new SnakeGame(chromosome2));
+		
+		return pairOfRecombinations;
 	}
 	
-	public ArrayList<SnakeGame> mutation(ArrayList<SnakeGame> sg){
-		ArrayList<SnakeGame> finalList = new ArrayList<SnakeGame>();
-
-		for(SnakeGame s : sg) {
-			SnakeGame newGame = new SnakeGame(mutate(s.getChromosome()));
-			finalList.add(newGame);
-		}
-		return finalList;
-	}
-	
-	public String mutate(String chromosome) {
-		String finalString = "";
+	public char mutate(char gene) {
 		char[] options = {'L', 'R', 'S'};
-		for(int i=0; i<chromosome.length(); ++i) {
-			if(rand.nextInt(100) < Config.mutationRate) {
-				while(true) {
-					int index = rand.nextInt(3);
-					if(options[index] != chromosome.charAt(i)) {
-						finalString += options[index];
-						break;
-					}					
-				}
-			}
-			else finalString += chromosome.charAt(i);
+		if(rand.nextInt(100) < Config.mutationRate) {
+			while(true) {
+				int index = rand.nextInt(3);
+				if(options[index] != gene) return options[index];		
+			}			
 		}
-		return finalString;
+		return gene;
+	}
+	
+	
+	private ArrayList<SnakeGame> getElitists(){
+		ArrayList<SnakeGame> elitists = new ArrayList<SnakeGame>();
+		for(int i=0; i<Config.elitists; ++i) {
+			elitists.add(chromosomes.get(i));
+		}
+		return elitists;
 	}
 	
 	private int sum(ArrayList<SnakeGame> sg) {
 		int sum = 0;
-		for(SnakeGame s : sg) {
-			sum += s.getEvaluation();
-		}
+		for(SnakeGame s : sg) sum += s.getEvaluation();
 		return sum;
 	}
-
+	
+	///////////////////////////////////////////////////////////////////////////////////////////
+	/*                       	  Visualization-Related Functions                            */
+	///////////////////////////////////////////////////////////////////////////////////////////
 	public void promptUser() {
 		--generationsToSimulate;
 		if(generationsToSimulate > 0) return;
+		
+		while(true) {
+			System.out.println("Would you like to visualize this generation? Y/N");
+			String input = scan.next().strip();
+			if(input.toLowerCase().equals("y")) visualize(chromosomes.get(0).getChromosome());
+			else if(input.toLowerCase().equals("n")) break;
+		}
+		
 		System.out.println("How many generations would you like to simulate?");
-		Scanner scan = new Scanner(System.in);
 		generationsToSimulate = scan.nextInt();
+	}
+	
+	public void visualize(String chromosome) {
+		SnakeGame sg = new SnakeGame(chromosome);
+		sg.visualize();
+	}
+	
+	private void printGenerationStatistics() {
+		System.out.println("Greatest evaluation for gen " + generation + ": " + chromosomes.get(0).getEvaluation());
+		System.out.println("Worst evaluation is " + chromosomes.get(chromosomes.size()-1).getEvaluation());
+		System.out.println("Chromosome is " + chromosomes.get(0).getChromosome());
 	}
 }

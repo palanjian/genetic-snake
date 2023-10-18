@@ -49,7 +49,7 @@ public class Simulation {
 		for(int i=0; i<Config.generationSize; ++i) {
 			SnakeGame selected = null;
 			switch(Config.selectionAlgorithm) {
-				case "ROULLETE":
+				case "ROULETTE":
 					selected = selectUsingRoulette(normalized, sumOfEvaluations);
 					break;
 			}
@@ -66,9 +66,9 @@ public class Simulation {
 			return sg;
 		}
 		
-		int discrepency = Math.abs(lowestValue);
+		int discrepancy = Math.abs(lowestValue);
 		for(SnakeGame s : sg) {
-			s.addToEvaluation(discrepency);
+			s.addToEvaluation(discrepancy);
 			normalized.add(s);
 		}
 		
@@ -90,8 +90,8 @@ public class Simulation {
 	private ArrayList<SnakeGame> recombination(ArrayList<SnakeGame> sg){
 		ArrayList<SnakeGame> recombinated = new ArrayList<SnakeGame>();
 		recombinated.addAll(getElitists());
-		
-		for(int i=0; i<sg.size()/2; ++i) {
+
+		for(int i=0; i<sg.size()/2 - Config.elitists; ++i) {
 			ArrayList<SnakeGame> pairOfRecombinations = null;
 			switch(Config.recombinationAlgorithm) {
 				case "SINGLE_POINT":
@@ -106,8 +106,8 @@ public class Simulation {
 	public ArrayList<SnakeGame> singlePointCrossover(SnakeGame sg1, SnakeGame sg2){
 		ArrayList<SnakeGame> pairOfRecombinations = new ArrayList<SnakeGame>();
 		int splitPoint = rand.nextInt(Config.chromosomeLength);
-		String chromosome1 = "";
-		String chromosome2 = "";
+		StringBuilder chromosome1 = new StringBuilder();
+		StringBuilder chromosome2 = new StringBuilder();
 		
 		for(int i=0; i<Config.chromosomeLength; ++i) {
 			char gene1 = sg1.getChromosome().charAt(i);
@@ -117,21 +117,21 @@ public class Simulation {
 			gene2 = mutate(gene2);
 			
 			if(i < splitPoint) {
-				chromosome1 += gene1;
-				chromosome2 += gene2;
+				chromosome1.append(gene1);
+				chromosome2.append(gene2);
 			}
 			else {
-				chromosome1 += gene2;
-				chromosome2 += gene1;
+				chromosome1.append(gene2);
+				chromosome2.append(gene1);
 			}
 		}
 		
-		pairOfRecombinations.add(new SnakeGame(chromosome1));
-		pairOfRecombinations.add(new SnakeGame(chromosome2));
+		pairOfRecombinations.add(new SnakeGame(chromosome1.toString()));
+		pairOfRecombinations.add(new SnakeGame(chromosome2.toString()));
 		
 		return pairOfRecombinations;
 	}
-	
+
 	public char mutate(char gene) {
 		char[] options = {'L', 'R', 'S'};
 		if(rand.nextInt(100) < Config.mutationRate) {
@@ -168,8 +168,8 @@ public class Simulation {
 		while(true) {
 			System.out.println("Would you like to visualize this generation? Y/N");
 			String input = scan.next().strip();
-			if(input.toLowerCase().equals("y")) visualize(chromosomes.get(0).getChromosome());
-			else if(input.toLowerCase().equals("n")) break;
+			if(input.equalsIgnoreCase("y")) visualize(chromosomes.get(0).getChromosome());
+			else if(input.equalsIgnoreCase("n")) break;
 		}
 		
 		System.out.println("How many generations would you like to simulate?");

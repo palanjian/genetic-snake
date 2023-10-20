@@ -91,7 +91,7 @@ public class Simulation {
 		ArrayList<SnakeGame> recombinated = new ArrayList<SnakeGame>();
 		recombinated.addAll(getElitists());
 
-		for(int i=0; i<sg.size()/2 - Config.elitists; ++i) {
+		for(int i=0; i<sg.size()/2 - Config.elitists/2; ++i) {
 			ArrayList<SnakeGame> pairOfRecombinations = null;
 			switch(Config.recombinationAlgorithm) {
 				case "SINGLE_POINT":

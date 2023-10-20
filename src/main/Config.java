@@ -20,17 +20,21 @@ public class Config {
 	
 	//the top x chromosomes of the previous generation should be placed in the new
 	//generation (so each generation never gets "worse". 
-	public static final int elitists = 30;
-	
+	public static final int elitists = 100;
+
 	public static final Direction initialDirection = Direction.RIGHT;
 
 	public static int initialRow = 5;
 	
 	public static int initialColumn = 5;
 
-	public static double mutationRate = 2;
+	public static double mutationRate = 4;
 
 	public static String selectionAlgorithm = "ROULETTE";
 
 	public static String recombinationAlgorithm = "SINGLE_POINT";
+
+	public static int foodEatenScore = 500;
+
+	public static int stepsTakenScore = -10;
 }

@@ -40,7 +40,7 @@ public class SnakeGame implements Comparable<SnakeGame>{
 	}
 	
 	public int evaluate(int dots, int steps) {
-	    return (500 * dots) - (10 * steps);
+		return (Config.foodEatenScore * dots) + (Config.stepsTakenScore * steps);
 	}
 
 	@Override

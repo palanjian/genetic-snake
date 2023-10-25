@@ -88,11 +88,11 @@ public class Simulation {
 	}
 	
 	private ArrayList<SnakeGame> recombination(ArrayList<SnakeGame> sg){
-		ArrayList<SnakeGame> recombinated = new ArrayList<SnakeGame>();
+		ArrayList<SnakeGame> recombinated = new ArrayList<>();
 		recombinated.addAll(getElitists());
 
 		for(int i=0; i<sg.size()/2 - Config.elitists/2; ++i) {
-			ArrayList<SnakeGame> pairOfRecombinations = null;
+			ArrayList<SnakeGame> pairOfRecombinations;
 			switch(Config.recombinationAlgorithm) {
 				case "SINGLE_POINT":
 					pairOfRecombinations = singlePointCrossover(sg.get(i*2), sg.get(i*2 + 1));
@@ -104,7 +104,7 @@ public class Simulation {
 	}
 	
 	public ArrayList<SnakeGame> singlePointCrossover(SnakeGame sg1, SnakeGame sg2){
-		ArrayList<SnakeGame> pairOfRecombinations = new ArrayList<SnakeGame>();
+		ArrayList<SnakeGame> pairOfRecombinations = new ArrayList<>();
 		int splitPoint = rand.nextInt(Config.chromosomeLength);
 		StringBuilder chromosome1 = new StringBuilder();
 		StringBuilder chromosome2 = new StringBuilder();
@@ -145,7 +145,7 @@ public class Simulation {
 	
 	
 	private ArrayList<SnakeGame> getElitists(){
-		ArrayList<SnakeGame> elitists = new ArrayList<SnakeGame>();
+		ArrayList<SnakeGame> elitists = new ArrayList<>();
 		for(int i=0; i<Config.elitists; ++i) {
 			elitists.add(chromosomes.get(i));
 		}

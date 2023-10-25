@@ -19,7 +19,7 @@ public class Snake {
 	//up, down, left, or right
 	private Direction trueDirection = Config.initialDirection;
 	//each cell of the current snake
-	private LinkedList<Cell> snakePieces = new LinkedList<Cell>();
+	private LinkedList<Cell> snakePieces = new LinkedList<>();
 	
 	private boolean hasCollided = false;
 	private int dotsEaten = 0;
@@ -50,13 +50,13 @@ public class Snake {
 		if(board.getCellType(row, column) == CellType.FOOD) {
 			board.setCellType(row, column, CellType.SNAKE);
 			snakeGame.incrementDotsEaten();
-			growTail();
+			growSnake();
 			
 			board.generateFood();
 		}
 	}
 
-	private void growTail() {
+	private void growSnake() {
 		snakePieces.add(new Cell(row, column, CellType.SNAKE));
 	}
 	
@@ -123,7 +123,6 @@ public class Snake {
 
 	//Getters & Setters
 	public boolean hasCollided() { return hasCollided; }
-	public int getDotsEaten() { return dotsEaten;}
 	public LinkedList<Cell> getSnakePieces() { return snakePieces; }
 
 }

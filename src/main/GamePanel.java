@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.io.Serial;
 
 import javax.swing.JPanel;
 
@@ -13,6 +14,7 @@ import snake.Snake;
 
 public class GamePanel extends JPanel{
 	
+	@Serial
 	private static final long serialVersionUID = 1L;
 	private final int tileSize = 64;
 	private final int columns = Config.rows;

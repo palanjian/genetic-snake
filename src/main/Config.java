@@ -22,19 +22,27 @@ public class Config {
 	//generation (so each generation never gets "worse". 
 	public static final int elitists = 100;
 
+	//direction snake should initially face (left, right, up, down)
 	public static final Direction initialDirection = Direction.RIGHT;
 
+	//row snake should be initialized in
 	public static int initialRow = 5;
-	
+
+	//column snake should be initialized in
 	public static int initialColumn = 5;
 
-	public static double mutationRate = 4;
+	//every gene in the chromosome has an X% chance to mutate on each recombination
+	public static double mutationRate = 2;
 
+	//current options: "ROULETTE"
 	public static String selectionAlgorithm = "ROULETTE";
 
+	//current options: "SINGLE_POINT"
 	public static String recombinationAlgorithm = "SINGLE_POINT";
 
+	//how many points should evaluation function reward/deduct for every piece of food eaten
 	public static int foodEatenScore = 500;
 
+	//how many points should evaluation function reward/deduct for every step taken
 	public static int stepsTakenScore = -10;
 }

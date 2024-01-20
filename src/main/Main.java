@@ -31,10 +31,9 @@ public class Main {
 		window.setLocationRelativeTo(null);
 	}
 		
-	public void setupSimulation(){
+	public void setupSimulation() {
 		Simulation simulation = new Simulation();
-		simulation.simulate();
+		simulation.simulate(false);
 	}
 
-	
 }

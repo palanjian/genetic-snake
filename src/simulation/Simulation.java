@@ -14,11 +14,15 @@ public class Simulation {
 	Random rand = new Random();
 	Scanner scan = new Scanner(System.in);
 	private int generationsToSimulate = 1;
-		
-	public void simulate(){
-		while(continueSimulation) {
+
+	//calibration variables
+	private int maxDotsEaten=0;
+
+	public void simulate(boolean calibration){
+		while (continueSimulation) {
 			getEvaluations();
-			promptUser();	
+			printGenerationStatistics();
+			promptUser();
 			setupNextGeneration();
 			++generation;
 		}
@@ -33,7 +37,6 @@ public class Simulation {
 			sg.play();
 		}
 		Collections.sort(chromosomes);
-		printGenerationStatistics();
 	}
 	
 	public void setupNextGeneration() {
@@ -186,4 +189,6 @@ public class Simulation {
 		System.out.println("Worst evaluation is " + chromosomes.get(chromosomes.size()-1).getEvaluation());
 		System.out.println("Chromosome is " + chromosomes.get(0).getChromosome());
 	}
+
+	public int getMaxDotsEaten() { return maxDotsEaten; }
 }

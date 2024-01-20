@@ -100,4 +100,5 @@ public class SnakeGame implements Comparable<SnakeGame>{
 	public Snake getSnake() { return snake; }
 	public Board getBoard() { return board; }
 
+	public int getDotsEaten() { return dotsEaten; }
 }

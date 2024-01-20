@@ -51,7 +51,6 @@ public class Snake {
 			board.setCellType(row, column, CellType.SNAKE);
 			snakeGame.incrementDotsEaten();
 			growSnake();
-			
 			board.generateFood();
 		}
 	}

@@ -26,6 +26,7 @@ public class GamePanel extends JPanel{
 	private Board board;
 	private Snake snake;
 	
+	//initializes JPanel for visualization
 	public GamePanel(SnakeGame snakeGame) {
 		this.snakeGame = snakeGame;
 		this.board = snakeGame.getBoard();

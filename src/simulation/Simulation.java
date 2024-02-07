@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
 import java.util.Scanner;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import main.Config;
 
@@ -14,9 +17,6 @@ public class Simulation {
 	Random rand = new Random();
 	Scanner scan = new Scanner(System.in);
 	private int generationsToSimulate = 1;
-
-	//calibration variables
-	private int maxDotsEaten=0;
 
 	public void simulate(boolean calibration){
 		while (continueSimulation) {
@@ -48,7 +48,7 @@ public class Simulation {
 		ArrayList<SnakeGame> fittest = new ArrayList<>();
 		ArrayList<SnakeGame> normalized = normalize(sg);
 		int sumOfEvaluations = sum(normalized);
-		
+
 		for(int i=0; i<Config.generationSize; ++i) {
 			SnakeGame selected = null;
 			switch(Config.selectionAlgorithm) {
@@ -189,6 +189,4 @@ public class Simulation {
 		System.out.println("Worst evaluation is " + chromosomes.get(chromosomes.size()-1).getEvaluation());
 		System.out.println("Chromosome is " + chromosomes.get(0).getChromosome());
 	}
-
-	public int getMaxDotsEaten() { return maxDotsEaten; }
 }

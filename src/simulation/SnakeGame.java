@@ -23,6 +23,7 @@ public class SnakeGame implements Comparable<SnakeGame>{
 		this.chromosome = chromosome;
 	}
 	
+	//"plays" the game of snake step-by-step and calls fitness function when its done
 	public void play() {
 		for(int i=0; i<chromosome.length(); ++i){
 			char nextMove = chromosome.charAt(i);
@@ -39,25 +40,26 @@ public class SnakeGame implements Comparable<SnakeGame>{
 		evaluation = evaluate(dotsEaten, stepsTaken);
 	}
 	
+	///////////////////////////////////////////////////////////////////////////////////////////
+	/*                       	  		Fitness Function                                     */
+	///////////////////////////////////////////////////////////////////////////////////////////
+	
 	public int evaluate(int dots, int steps) {
+		if(dots > 15 ) return (Config.foodEatenScore * dots) + steps;
 		return (Config.foodEatenScore * dots) + (Config.stepsTakenScore * steps);
-	}
-
-	@Override
-	public int compareTo(SnakeGame o) {
-		if(this.evaluation > o.getEvaluation()) return -1;
-		else if(this.evaluation < o.getEvaluation()) return 1;
-		else return 0;
-	}
+	}	
+	
+	///////////////////////////////////////////////////////////////////////////////////////////
+	/*                       	  		                                 */
+	///////////////////////////////////////////////////////////////////////////////////////////
 	
 	public boolean checkLoseCondition() {
-		if(snake.hasCollided()) return true;
-		return false;
+		return snake.hasCollided();
 	}
 	
 	public boolean checkWinCondition() {
-		if(snake.getSnakePieces().size() == Config.rows * Config.columns - 1) return true;
-		return false;
+		//if snake fills up the screen, it has won!
+		return snake.getSnakePieces().size() == Config.rows * Config.columns - 1;
 	}
 	
 	//visualization-centered functions
@@ -87,6 +89,14 @@ public class SnakeGame implements Comparable<SnakeGame>{
 				gp.repaint(); //calls paintComponent		
 			}
 		}
+	}
+	
+	//used for Collections.sort - sorts by evaluations
+	@Override
+	public int compareTo(SnakeGame o) {
+		if(this.evaluation > o.getEvaluation()) return -1;
+		else if(this.evaluation < o.getEvaluation()) return 1;
+		else return 0;
 	}
 	
 	public GamePanel getGamePanel() { return gp; }

@@ -16,7 +16,7 @@ public class Config {
 	public static int generationSize = 5000;
 	
 	//length of individual chromosome strings (how many genes)
-	public static int chromosomeLength = 250;
+	public static int chromosomeLength = 500;
 	
 	//the top x chromosomes of the previous generation should be placed in the new
 	//generation (so each generation never gets "worse".)
